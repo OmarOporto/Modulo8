@@ -1,0 +1,40 @@
+pipeline {
+    agent {
+        node {
+            label 'Node1'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'cd /home/debian/Documents/Modulo_7/calculadora'
+                sh 'docker build -t calculadora .'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    def env
+                    switch (params.ENVIRONMENT) {
+                        case 'DEV':
+                            sh 'cd /home/debian/Documents/Modulo_7'
+                            sh 'docker-compose -f /home/debian/Documents/Modulo_7/docker-compose.yml up -d nodejs-server'
+                            break
+                        case 'QA':
+                            sh 'curl localhost:9000'
+                            sh 'curl localhost:8000'
+                            break
+                        case 'PROD':
+                            env = 'prod'
+                            break
+                        default:
+                            env = 'DEV'
+                            break
+                    }
+                    // Agregue aquí los pasos para desplegar su aplicación en el ambiente seleccionado
+                    echo "Desplegando en ambiente ${env}"
+                }
+            }
+        }
+    }
+}

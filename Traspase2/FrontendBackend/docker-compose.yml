@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  nodejs-server:
+    image: "calculadora:latest"
+    ports:
+      - "9000:9000"
+  django3:
+    image: "django3:latest"
+    ports:
+      - "8000:8000"
